@@ -22,7 +22,7 @@ import random, math
 # constants
 VERT_BORDER = 20 # borders for savefile
 HORZ_BORDER = 20
-VARM = 2.0 # multiply variances with this. Increase this to make the handwriting bad
+VARM = 1.0 # multiply variances with this. Increase this to make the handwriting bad
 
 ### File writing part
 def makeim(lines, filename = "text.bmp", bgcolor = (256, 256, 256), linecolor = (0, 0, 0)):
@@ -157,7 +157,7 @@ def hwfile(f, chars):
                     if com[0] == "stroke":
                         if com[i] == "steps" and i+2 < len(com):
                             steps = int(com[i+1])
-                            stepsvar = int(com[i+2]) * VARM
+                            stepsvar = int(float(com[i+2]) * VARM)
                             done[0] = 0
                             i += 3
                         elif com[i] == "len" and i+2 < len(com):
@@ -199,7 +199,7 @@ def hwfile(f, chars):
                             i += 2
                         elif com[i] == "turn" and i+3 < len(com):
                             turn = float(com[i+1])
-                            stepsvar = float(com[i+2]) * VARM
+                            stepsvar = int(float(com[i+2]) * VARM)
                             turnvar = float(com[i+3]) * VARM
                             done[1] = 0
                             i += 4
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     f.close()
     x, y, a = 0, 0, 0
     k = []
-    for i in range(5):
-        l, x, y, a = chars['a'](x, y, a, x, y)
+    for let in "aaaaa":
+        l, x, y, a = chars[let](x, y, a, x, y)
         k.extend(l)
     makeim(k)
