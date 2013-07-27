@@ -1,3 +1,4 @@
 # This file will get loaded by default
 
 load english_lower.hw
+load whitespace.hw
