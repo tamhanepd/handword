@@ -1,7 +1,7 @@
 #handword.py
 #Tries to make approximate handwritten letters.
 
-#    Copyright (C) 2013  K Hariram
+#    Copyright (C) 2013  K Hariram (hariran@gmail.com)
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 #    You should have received a copy of the GNU General Public License along
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
 from PIL import Image, ImageDraw
 import random, math
 
@@ -82,6 +83,7 @@ class stroke(object):
             line.extend([x, y])
             turn = self.turni + t*(self.turnf-self.turni)/(s-1)
             angle += random.uniform(turn - self.turnvar, turn + self.turnvar)
+            angle %= 2*math.pi
         return line, x, y, angle
             
 class reposition(object):
@@ -106,6 +108,7 @@ class reposition(object):
         x += random.uniform(self.x - self.xvar, self.x + self.xvar)
         y += random.uniform(self.y - self.yvar, self.y + self.yvar)
         angle += random.uniform(self.angle - self.anglevar, self.angle + self.anglevar)
+        angle %= 2*math.pi
         return [], x, y, angle
 
 class letter(object):
@@ -130,116 +133,120 @@ class HWfileError(Exception):
 def hwfile(f, chars):
     mode = "main"
     oocerror = "{0} {1}: Encountered {2} command out of context"
-    uperror = "{0} {1}: Unidentified parameter {2} for {3} command"
+    uperror = "{0} {1}: Unidentified parameter or insufficient arguments {2} for {3} command"
     iperror = "{0} {1}: All parameters for {2} not supplied"
     slerror = "{0} {1}: Subletter {2} not defined yet"
     ucerror = "{0} {1}: Unkown command {2}"
+    verror = "{0} {1}: Value error: {2}"
     for lno, com in enumerate(f.readlines()):
         com = com.split()
-        if not com or com[0].startswith("#"):
-            pass
-        elif com[0] == "load":
-            nf = open(com[1], 'r')
-            hwfile(nf, chars)
-        elif com[0] == "letter":
-            if mode == "main":
-                mode = "letter"
-                char = com[1]
-                strokes = []
-            else:
-                raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
-        elif com[0] in ["stroke", "reposition", "arc"]:
-            if mode == "letter":
-                done = [1]*3 # Keeps track of whether all parameters are given
-                i = 1
-                while i < len(com):
-                    elser = False
-                    if com[0] == "stroke":
-                        if com[i] == "steps" and i+2 < len(com):
-                            steps = int(com[i+1])
-                            stepsvar = int(float(com[i+2]) * VARM)
-                            done[0] = 0
-                            i += 3
-                        elif com[i] == "len" and i+2 < len(com):
-                            llen = float(com[i+1])
-                            llenvar = float(com[i+2]) * VARM
-                            done[1] = 0
-                            i += 3
-                        elif com[i] == "turn" and i+3 < len(com):
-                            turni = float(com[i+1])
-                            turnf = float(com[i+2])
-                            turnvar = float(com[i+3]) * VARM
-                            done[2] = 0
-                            i += 4
-                        else: elser = True
-                    elif com[0] == "reposition":
-                        if com[i] == "x" and i+3 < len(com):
-                            xtype = str(com[i+1])
-                            x = float(com[i+2])
-                            xvar = float(com[i+3]) * VARM
-                            done[0] = 0
-                            i += 4
-                        elif com[i] == "y" and i+3 < len(com):
-                            ytype = str(com[i+1])
-                            y = float(com[i+2])
-                            yvar = float(com[i+3]) * VARM
-                            done[1] = 0
-                            i += 4
-                        elif com[i] == "angle" and i+3 < len(com):
-                            angletype = str(com[i+1])
-                            angle = float(com[i+2])
-                            anglevar = float(com[i+3]) * VARM
-                            done[2] = 0
-                            i += 4
-                        else: elser = True
-                    elif com[0] == "arc":
-                        if com[i] == "radius" and i+1 < len(com):
-                            radius = float(com[i+1])
-                            done[0] = 0
-                            i += 2
-                        elif com[i] == "turn" and i+3 < len(com):
-                            turn = float(com[i+1])
-                            stepsvar = int(float(com[i+2]) * VARM)
-                            turnvar = float(com[i+3]) * VARM
-                            done[1] = 0
-                            i += 4
-                        elif com[i] == "len" and i+2 < len(com):
-                            llen = float(com[i+1])
-                            llenvar = float(com[i+2]) * VARM
-                            done[2] = 0
-                            i += 3
-                        else: elser = True
-                    else: elser = True
-                    if not elser:
-                        pass
-                    elif com[i].startswith("#"):
-                        i = len(com)
-                    else:
-                        raise HWfileError(uperror.format(f.name, lno+1, com[i], com[0]))
-                if sum(done) == 0:
-                    if com[0] == "stroke": strokes.append(stroke(steps = steps, llen = llen, turni = turni, turnf = turnf, stepsvar = stepsvar, llenvar = llenvar, turnvar = turnvar))
-                    elif com[0] == "reposition": strokes.append(reposition(xtype = xtype, x = x, xvar = xvar, ytype = ytype, y = y, yvar = yvar, angletype = angletype, angle = angle, anglevar = anglevar))
-                    elif com[0] == "arc":
-                        steps = int(radius*turn + 0.5)
-                        turni = turnf = turn/steps
-                        steps = abs(steps)
-                        strokes.append(stroke(steps = steps, llen = llen, turni = turni, turnf = turnf, stepsvar = stepsvar, llenvar = llenvar, turnvar = turnvar))
+        try:
+            if not com or com[0].startswith("#"):
+                pass
+            elif com[0] == "load":
+                nf = open(com[1], 'r')
+                hwfile(nf, chars)
+            elif com[0] == "letter":
+                if mode == "main":
+                    mode = "letter"
+                    char = com[1]
+                    strokes = []
                 else:
-                    raise HWfileError(iperror.format(f.name, lno+1, com[0]))
-            else:
-                raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
-        elif com[0] == "subletter":
-            if mode == "letter":
-                if com[1] in chars:
-                    strokes.append(chars[com[1]])
-                else: raise HWfileError(slerror.format(f.name, lno+1, com[1]))
-            else: raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
-        elif com[0] == "end":
-            if mode == "letter":
-                mode = "main"
-                chars[char] = letter(strokes, char)
-            else: raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
-        else: raise HWfileError(ucerror.format(f.name, lno+1, com[0]))
+                    raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
+            elif com[0] in ["stroke", "reposition", "arc"]:
+                if mode == "letter":
+                    done = [1]*3 # Keeps track of whether all parameters are given
+                    i = 1
+                    while i < len(com):
+                        elser = False
+                        if com[0] == "stroke":
+                            if com[i] == "steps" and i+2 < len(com):
+                                steps = int(com[i+1])
+                                stepsvar = int(float(com[i+2]) * VARM)
+                                done[0] = 0
+                                i += 3
+                            elif com[i] == "len" and i+2 < len(com):
+                                llen = float(com[i+1])
+                                llenvar = float(com[i+2]) * VARM
+                                done[1] = 0
+                                i += 3
+                            elif com[i] == "turn" and i+3 < len(com):
+                                turni = float(com[i+1])
+                                turnf = float(com[i+2])
+                                turnvar = float(com[i+3]) * VARM
+                                done[2] = 0
+                                i += 4
+                            else: elser = True
+                        elif com[0] == "reposition":
+                            if com[i] == "x" and i+3 < len(com):
+                                xtype = str(com[i+1])
+                                x = float(com[i+2])
+                                xvar = float(com[i+3]) * VARM
+                                done[0] = 0
+                                i += 4
+                            elif com[i] == "y" and i+3 < len(com):
+                                ytype = str(com[i+1])
+                                y = float(com[i+2])
+                                yvar = float(com[i+3]) * VARM
+                                done[1] = 0
+                                i += 4
+                            elif com[i] == "angle" and i+3 < len(com):
+                                angletype = str(com[i+1])
+                                angle = float(com[i+2])
+                                anglevar = float(com[i+3]) * VARM
+                                done[2] = 0
+                                i += 4
+                            else: elser = True
+                        elif com[0] == "arc":
+                            if com[i] == "radius" and i+1 < len(com):
+                                radius = float(com[i+1])
+                                done[0] = 0
+                                i += 2
+                            elif com[i] == "turn" and i+3 < len(com):
+                                turn = float(com[i+1])
+                                stepsvar = int(float(com[i+2]) * VARM)
+                                turnvar = float(com[i+3]) * VARM
+                                done[1] = 0
+                                i += 4
+                            elif com[i] == "len" and i+2 < len(com):
+                                llen = float(com[i+1])
+                                llenvar = float(com[i+2]) * VARM
+                                done[2] = 0
+                                i += 3
+                            else: elser = True
+                        else: elser = True
+                        if not elser:
+                            pass
+                        elif com[i].startswith("#"):
+                            i = len(com)
+                        else:
+                            raise HWfileError(uperror.format(f.name, lno+1, com[i], com[0]))
+                    if sum(done) == 0:
+                        if com[0] == "stroke": strokes.append(stroke(steps = steps, llen = llen, turni = turni, turnf = turnf, stepsvar = stepsvar, llenvar = llenvar, turnvar = turnvar))
+                        elif com[0] == "reposition": strokes.append(reposition(xtype = xtype, x = x, xvar = xvar, ytype = ytype, y = y, yvar = yvar, angletype = angletype, angle = angle, anglevar = anglevar))
+                        elif com[0] == "arc":
+                            steps = int(radius*turn + 0.5)
+                            turni = turnf = turn/steps
+                            steps = abs(steps)
+                            strokes.append(stroke(steps = steps, llen = llen, turni = turni, turnf = turnf, stepsvar = stepsvar, llenvar = llenvar, turnvar = turnvar))
+                    else:
+                        raise HWfileError(iperror.format(f.name, lno+1, com[0]))
+                else:
+                    raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
+            elif com[0] == "subletter":
+                if mode == "letter":
+                    if com[1] in chars:
+                        strokes.append(chars[com[1]])
+                    else: raise HWfileError(slerror.format(f.name, lno+1, com[1]))
+                else: raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
+            elif com[0] == "end":
+                if mode == "letter":
+                    mode = "main"
+                    chars[char] = letter(strokes, char)
+                else: raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
+            else: raise HWfileError(ucerror.format(f.name, lno+1, com[0]))
+        except ValueError as ve:
+            raise HWfileError(verror.format(f.name, lno+1, ve))
         
 if __name__ == "__main__":
     f = open("default.hw")
@@ -248,7 +255,7 @@ if __name__ == "__main__":
     f.close()
     x, y, a = 0, 0, 0
     k = []
-    for let in "aaaaa":
+    for let in 'abcdefgh':#['a', 'b', '\\s', 'c', 'd', '\\n', '\\t', 'c', '\\r', 'a']:
         l, x, y, a = chars[let](x, y, a, x, y)
         k.extend(l)
     makeim(k)
