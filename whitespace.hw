@@ -1,0 +1,15 @@
+letter \s # Space character
+  reposition x f 60.0 20.0 y f 0.0 2.0 angle a 0.0 0.0
+end
+
+letter \t # Tab character
+  reposition x f 400.0 50.0 y f 0.0 2.0 angle a 0.0 0.0
+end
+
+letter \r # Return
+  reposition x a 0.0 10.0 y f 0.0 2.0 angle a 0.0 0.0
+end
+
+letter \n # New line
+  reposition x a 0.0 10.0 y f 190.0 10.0 angle a 0.0 0.0
+end
