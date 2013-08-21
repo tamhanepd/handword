@@ -44,11 +44,11 @@ letter d
 end
 
 letter e
-  reposition x f 10.0 3.0 y f 110.0 4.0 angle a 0.0 0.02
+  reposition x f 10.0 3.0 y f 118.0 4.0 angle a 0.0 0.02
   stroke steps 59 2 len 1.0 0.1 turn 0.0 -0.01 0.005
   stroke steps 6 0 len 1.0 0.1 turn -0.21 -0.225 0.01
   arc radius -32 turn 3.15 4 0.002 len 1.0 0.1
-  stroke steps 10 1 len 1.0 0.1 turn -0.001 -0.001 0.001
+  stroke steps 5 1 len 1.0 0.1 turn -0.001 -0.001 0.001
   arc radius -45 turn 1.7 4 0.002 len 1.0 0.1
   arc radius -60 turn 0.3 4 0.002 len 1.0 0.1
   reposition x f 90.0 3.0 y f 0.0 0.1 angle a 0.0 0.0
@@ -87,5 +87,200 @@ letter h
   arc radius 40 turn 1.5708 2 0.002 len 1.0 0.1
   stroke steps 40 4 len 1.0 0.1 turn -0.001 -0.005 0.001
   reposition x f 90.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter i
+  reposition x f 20.0 3.0 y f 90.0 6.0 angle a 1.58 0.02
+  stroke steps 60 3 len 1.0 0.1 turn 0.0 -0.01 0.001
+  stroke steps 10 2 len 1.0 0.1 turn 0.1 -0.15 0.01
+  reposition x f 20.0 3.0 y f 50.0 10.0 angle a 0.0 3.0
+  stroke steps 10 3 len 1.0 0.1 turn 0.6 0.7 0.2
+  reposition x f 44.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter j
+  reposition x f 30.0 3.0 y f 90.0 6.0 angle a 1.5708 0.02
+  stroke steps 55 5 len 2.0 0.2 turn 0.0 0.005 0.002
+  arc radius 18.0 turn 2.5 5 0.004 len 1.0 0.1
+  reposition x f 30.0 3.0 y f 50.0 10.0 angle a 0.0 3.0
+  stroke steps 10 3 len 1.0 0.1 turn 0.6 0.7 0.2
+  reposition x f 50.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter k
+  reposition x f 12.0 3.0 y f 20.0 4.0 angle a 1.5 0.04
+  stroke steps 70 3 len 2.0 0.2 turn 0.002 0.002 0.002
+  reposition x r 68.0 2.0 y f 80.0 4.0 angle a 2.6 0.08
+  stroke steps 38 1 len 2.0 0.2 turn 0.001 0.001 0.002
+  stroke steps 2 0 len 1.0 0.1 turn 1.6 1.6 0.002
+  stroke steps 30 3 len 1.0 0.1 turn 0.05 0.02 0.008
+  stroke steps 50 5 len 1.0 0.1 turn 0.005 -0.005 0.004
+  reposition x f 90.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter l
+  reposition x f 18.0 3.0 y f 160.0 4.0 angle a 4.73 0.04
+  stroke steps 70 3 len 2.0 0.2 turn -0.0005 -0.0005 0.002
+  stroke steps 2 0 len 1.0 0.1 turn -1.56 -1.5708 0.002
+  stroke steps 62 3 len 2.0 0.2 turn -0.0005 -0.0005 0.002
+  stroke steps 20 5 len 1.0 0.1 turn -0.03 -0.1 0.008
+  reposition x f 44.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter m
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 0.0 0.02
+  arc radius 15.0 turn 1.5708 1 0.004 len 1.0 0.1
+  stroke steps 65 2 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a 4.7124 0.02
+  stroke steps 50 2 len 1.0 0.1 turn 0.0005 0.0 0.002
+  arc radius 30.0 turn 3.14 3 0.002 len 1.0 0.1
+  stroke steps 50 2 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a 4.73 0.02
+  stroke steps 50 2 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  arc radius 30.0 turn 2.9 3 0.002 len 1.0 0.1
+  stroke steps 20 1 len 1.0 0.1 turn 0.015 0.00 0.002
+  stroke steps 20 1 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  arc radius -15.0 turn 1.5 10 0.016 len 1.0 0.1
+  reposition x f 170.0 5.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter n
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 0.0 0.02
+  arc radius 15.0 turn 1.5708 1 0.004 len 1.0 0.1
+  stroke steps 65 2 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a 4.7124 0.02
+  stroke steps 50 2 len 1.0 0.1 turn 0.0005 0.0 0.002
+  arc radius 30.0 turn 2.94 3 0.002 len 1.0 0.1
+  stroke steps 20 1 len 1.0 0.1 turn 0.015 0.00 0.002
+  stroke steps 20 1 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  arc radius -15.0 turn 1.5 10 0.016 len 1.0 0.1
+  reposition x f 110.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter o
+  reposition x f 30.0 3.0 y f 92.0 6.0 angle a 3.8 0.02
+  arc radius -5.0 turn 1.5708 0 0.008 len 1.0 0.1
+  arc radius -40.0 turn 6.0 8 0.004 len 1.0 0.3
+  arc radius -30.0 turn 0.3 2 0.008 len 1.0 0.1
+  stroke steps 4 3 len 1.0 0.1 turn 0.01 0.0 0.008
+  reposition x f 100.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter p
+  reposition x f 12.0 3.0 y f 80.0 4.0 angle a 1.5708 0.02
+  stroke steps 65 3 len 2.0 0.1 turn 0.0 0.0 0.002 
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle r 3.0 0.02
+  stroke steps 61 3 len 2.0 0.1 turn 0.005 0.003 0.004
+  arc radius 15.0 turn 1.4 2 0.004 len 1.0 0.1
+  stroke steps 15 2 len 1.0 0.1 turn 0.0 0.0 0.004
+  arc radius 40.0 turn 3.1416 6 0.002 len 1.0 0.1
+  stroke steps 32 3 len 1.0 0.1 turn 0.01 0.001 0.004
+  reposition x f 90.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter q
+  reposition x f 85.0 3.0 y f 82.0 4.0 angle a 3.3 0.02
+  stroke steps 30 1 len 1.0 0.1 turn -0.002 -0.003 0.001
+  arc radius -45 turn 1.5708 2 0.001 len 1.0 0.1
+  arc radius -30 turn 2.1 2. 0.003 len 1.0 0.1
+  stroke steps 75 1 len 1.0 0.1 turn -0.02 -0.01 0.01
+  reposition x r 0.0 0.0 y r -1.0 0.0 angle r 3.1 0.1
+  stroke steps 65 5 len 2.0 0.2 turn 0.0 0.0005 0.004
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle r 3.5 0.2
+  stroke steps 30 15 len 2.0 2.0 turn 0.0 0.0 0.004
+  reposition x f 110.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter r
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 0.2 0.05
+  arc radius 15.0 turn 1.27 3 0.008 len 1.0 0.2
+  stroke steps 65 3 len 1.0 0.1 turn 0.003 0.0 0.004
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a 4.7 0.02
+  stroke steps 30 3 len 1.0 0.1 turn 0.001 0.002 0.004
+  stroke steps 65 3 len 1.0 0.1 turn 0.005 0.045 0.008
+  stroke steps 8 3 len 1.0 0.2 turn 0.01 0.0 0.004
+  reposition x f 70.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter s
+  reposition x f 73.0 3.0 y f 90.0 4.0 angle a 3.6 0.02
+  stroke steps 40 5 len 1.0 0.1 turn -0.015 -0.01 0.004
+  arc radius -19.0 turn 3.0 5 0.004 len 1.0 0.1
+  stroke steps 35 4 len 1.0 0.1 turn -0.005 0.015 0.004
+  arc radius 23.0 turn 3.0 5 0.008 len 1.0 0.1
+  stroke steps 55 10 len 1.0 0.2 turn 0.01 0.03 0.004
+  reposition x f 95.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter t
+  reposition x f 40.0 3.0 y f 40.0 4.0 angle a 1.58 0.02
+  stroke steps 50 5 len 2.0 0.2 turn -0.0005 -0.004 0.002
+  arc radius -20.0 turn 1.56 2 0.004 len 1.0 0.1
+  stroke steps 15 5 len 1.0 0.1 turn 0.004 0.006 0.004
+  reposition x f 12.0 6.0 y f 72.0 8.0 angle a 0.0 0.05
+  stroke steps 32 4 len 2.0 0.3 turn 0.0 0.0 0.001
+  reposition x f 85.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter u
+  reposition x f 15.0 3.0 y f 80.0 4.0 angle a 1.9 0.02
+  stroke steps 21 2 len 1.0 0.1 turn -0.015 -0.01 0.004
+  stroke steps 78 3 len 1.0 0.1 turn -0.002 -0.035 0.002
+  stroke steps 95 4 len 1.0 0.1 turn -0.042 0.005 0.002
+  stroke steps 15 1 len 1.0 0.1 turn 0.0005 0.0005 0.002
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle r 3.1416 0.04
+  stroke steps 37 10 len 2.0 0.2 turn 0.0 -0.005 0.004
+  stroke steps 8 5 len 1.0 0.1 turn -0.1 -0.05 0.008
+  reposition x f 100.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter v
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 1.4 0.06
+  stroke steps 88 5 len 1.0 0.1 turn -0.006 -0.002 0.004
+  stroke steps 10 0 len 1.0 0.1 turn -0.22 -0.22 0.008
+  stroke steps 88 5 len 1.0 0.1 turn -0.002 -0.006 0.004
+  reposition x f 87.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter w
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 1.4 0.06
+  stroke steps 88 5 len 1.0 0.1 turn -0.006 -0.002 0.004
+  stroke steps 20 0 len 1.0 0.1 turn -0.11 -0.11 0.008
+  stroke steps 88 5 len 1.0 0.1 turn -0.002 -0.006 0.004
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a 1.57 0.04
+  stroke steps 90 5 len 1.0 0.1 turn -0.001 -0.02 0.004
+  stroke steps 30 0 len 1.0 0.1 turn -0.05 -0.05 0.008
+  stroke steps 20 5 len 1.0 0.1 turn -0.03 -0.01 0.004
+  stroke steps 60 3 len 1.0 0.1 turn -0.01 -0.001 0.004
+  reposition x f 170.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter x
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 0.5 0.02
+  stroke steps 120 10 len 1.0 0.1 turn 0.016 -0.016 0.004
+  reposition x f 83.0 3.0 y f 80.0 4.0 angle a 2.3 0.02
+  stroke steps 55 5 len 2.0 0.2 turn -0.004 0.004 0.004
+  reposition x f 94.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter y
+  reposition x f 13.0 3.0 y f 80.0 4.0 angle a 1.4 0.06
+  stroke steps 88 5 len 1.0 0.1 turn -0.006 -0.002 0.004
+  stroke steps 10 0 len 1.0 0.1 turn -0.22 -0.22 0.008
+  stroke steps 88 5 len 1.0 0.1 turn -0.002 -0.006 0.004
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle r 3.3 0.02
+  stroke steps 70 5 len 2.0 0.2 turn 0.0 0.001 0.004
+  stroke steps 15 1 len 1.0 0.1 turn 0.01 0.1 0.004
+  reposition x f 90.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
+end
+
+letter z
+  reposition x f 10.0 3.0 y f 80.0 4.0 angle a 0.2 0.06
+  stroke steps 40 4 len 2.0 0.2 turn -0.01 -0.01 0.004
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a 2.3 0.1
+  stroke steps 55 5 len 2.0 0.2 turn -0.004 0.004 0.004
+  reposition x r 0.0 0.0 y r 0.0 0.0 angle a -0.2 0.06
+  stroke steps 40 4 len 2.0 0.2 turn 0.01 0.01 0.004
+  reposition x f 97.0 3.0 y f 0.0 1.0 angle a 0.0 0.0
 end
   
