@@ -25,12 +25,12 @@ def randbox(mean, halfwidth):
     return mean + halfwidth * random.uniform(-1, 1)
 
 # constants
-VERT_BORDER = 20 # borders for savefile
-HORZ_BORDER = 20
-VARM = 4.0 # multiply variances with this. Increase this to make the handwriting bad
+VERT_BORDER = 200 # borders for savefile
+HORZ_BORDER = 200
+VARM = 1.0 # multiply variances with this. Increase this to make the handwriting bad
 XSCALE = 1.0
 YSCALE = 1.0
-THICKNESS = 2
+THICKNESS = 4
 
 ### File writing part
 def makeim(lines, filename = "text.bmp", bgcolor = (256, 256, 256), linecolor = (0, 0, 0)):
@@ -279,14 +279,23 @@ def hwfile(f, chars):
         except ValueError as ve:
             raise HWfileError(verror.format(f.name, lno+1, ve))
         
+def hwencode(s):
+    maps = {' ':'\\s', '\t':'\\t', '\n':'\\n'}
+    ret = []
+    for l in s:
+        if l in maps: ret.append(maps[l])
+        else: ret.append(l)
+    return ret
+
 if __name__ == "__main__":
-    f = open("default.hw")
-    chars = {}
-    hwfile(f, chars)
-    f.close()
+    with open("default.hw") as f:
+        chars = {}
+        hwfile(f, chars)
     x, y, a = 0, 0, 0
     k = []
-    for let in list('abcdef')+['\\n']+ list('ghijklm')+['\\n'] + list('nopqrst') + list('')+['\\n']+ list('uvwxyz'):
-        l, x, y, a = chars[let](x, y, a, x, y, varm = 2.0)
+    with open("text.txt") as txtf:
+        mes = hwencode(txtf.read())
+    for let in mes:#list('AaBbCcDd')+['\\n']+ list('EeFfGgHh')+['\\n'] + list('IiJjKkLl') + ['\\n'] + list('MmNnOoPp') + ['\\n']+ list('QqRrSsTt') + ['\\n']+ list('UuVvWw') + ['\\n']+ list('XxYyZz.,;'):
+        l, x, y, a = chars[let](x, y, a, x, y, varm = VARM)
         k.extend(l)
     makeim(k)
