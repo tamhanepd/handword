@@ -1,4 +1,6 @@
 # This file will get loaded by default
 
 load english_lower.hw
+load english_upper.hw
 load whitespace.hw
+load punct.hw

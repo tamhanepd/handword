@@ -20,10 +20,17 @@
 from PIL import Image, ImageDraw
 import random, math
 
+def randbox(mean, halfwidth):
+    """ This method will be called whenever some randomness is required"""
+    return mean + halfwidth * random.uniform(-1, 1)
+
 # constants
-VERT_BORDER = 20 # borders for savefile
-HORZ_BORDER = 20
+VERT_BORDER = 200 # borders for savefile
+HORZ_BORDER = 200
 VARM = 1.0 # multiply variances with this. Increase this to make the handwriting bad
+XSCALE = 1.0
+YSCALE = 1.0
+THICKNESS = 4
 
 ### File writing part
 def makeim(lines, filename = "text.bmp", bgcolor = (256, 256, 256), linecolor = (0, 0, 0)):
@@ -46,7 +53,7 @@ def makeim(lines, filename = "text.bmp", bgcolor = (256, 256, 256), linecolor = 
     im = Image.new("RGB", (maxx, maxy), bgcolor)
     liner = ImageDraw.Draw(im)
     for line in lines:
-        liner.line(line, fill = linecolor)
+        liner.line(line, fill = linecolor, width = THICKNESS)
     filename = check_extension(filename, ["bmp", "gif", "jpg", "jpeg"])
     im.save(filename)
 
@@ -73,16 +80,17 @@ class stroke(object):
         self.stepsvar = stepsvar
         self.llenvar = llenvar
         self.turnvar = turnvar
-    def __call__(self, x, y, angle, xframe, yframe):
+    def __call__(self, x, y, angle, xframe, yframe, varm=VARM, xscale=XSCALE, yscale=YSCALE, **kwargs):
         line = [x, y]
-        s = random.randint(self.steps - self.stepsvar, self.steps + self.stepsvar)
+        s = int(randbox(self.steps, self.stepsvar * varm) + 0.5)
         for t in range(s):
-            stride = random.uniform(self.llen - self.llenvar, self.llen + self.llenvar)
-            x += stride * math.cos(angle)
-            y += stride * math.sin(angle)
+            stride = randbox(self.llen, self.llenvar * varm)
+            x += stride * math.cos(angle) * xscale
+            y += stride * math.sin(angle) * yscale
             line.extend([x, y])
-            turn = self.turni + t*(self.turnf-self.turni)/(s-1)
-            angle += random.uniform(turn - self.turnvar, turn + self.turnvar)
+            if s != 1: turn = self.turni + t*(self.turnf-self.turni)/(s-1)
+            else: turn = (self.turnf+self.turni)/2.0
+            angle += randbox(turn, self.turnvar * varm)
             angle %= 2*math.pi
         return line, x, y, angle
             
@@ -99,28 +107,34 @@ class reposition(object):
         self.angletype = angletype
         self.angle = angle
         self.anglevar = anglevar
-    def __call__(self, x, y, angle, xframe, yframe):
+    def __call__(self, x, y, angle, xframe, yframe,  varm=VARM, xscale=XSCALE, yscale=YSCALE, **kwargs):
         if   self.xtype == "f": x = xframe
         elif self.xtype == "a": x = 0
         if   self.ytype == "f": y = yframe
         elif self.ytype == "a": y = 0
         if self.angletype in "af": angle = 0
-        x += random.uniform(self.x - self.xvar, self.x + self.xvar)
-        y += random.uniform(self.y - self.yvar, self.y + self.yvar)
-        angle += random.uniform(self.angle - self.anglevar, self.angle + self.anglevar)
+        x += randbox(self.x, self.xvar * varm) * xscale
+        y += randbox(self.y, self.yvar * varm) * yscale
+        angle += randbox(self.angle, self.anglevar * varm)
         angle %= 2*math.pi
         return [], x, y, angle
 
 class letter(object):
-    def __init__(self, strokes, char):
+    def __init__(self, strokes, char, varm=VARM, xscale=XSCALE, yscale=YSCALE):
         self.strokes = strokes
         self.char = char
-    def __call__(self, x, y, angle, xframe, yframe):
+        self.varm = varm
+        self.xscale = xscale
+        self.yscale = yscale
+    def __call__(self, x, y, angle, xframe, yframe, varm = None, xscale = 1.0, yscale = 1.0):
+        xscale *= self.xscale
+        yscale *= self.yscale
+        if varm == None :varm = self.varm
         xframe = x
         yframe = y
         lines = []
         for st in self.strokes:
-            line, x, y, angle = st(x, y, angle, xframe, yframe)
+            line, x, y, angle = st(x, y, angle, xframe, yframe, varm=varm, xscale=xscale, yscale=yscale)
             if len(line) > 0 and type(line[0]) == list: lines.extend(line)
             elif len(line)>=4: lines.append(line)
         return lines, x, y, angle
@@ -153,27 +167,34 @@ def hwfile(f, chars):
                     strokes = []
                 else:
                     raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
-            elif com[0] in ["stroke", "reposition", "arc"]:
+            elif com[0] in ["stroke", "reposition", "arc", "subletter"]:
                 if mode == "letter":
                     done = [1]*3 # Keeps track of whether all parameters are given
                     i = 1
+                    if com[0] == "subletter":
+                        done = [0]
+                        if com[1] not in chars:
+                            raise HWfileError(slerror.format(f.name, lno+1, com[1]))
+                        xscale = yscale = 1.0
+                        varm = VARM
+                        i = 2
                     while i < len(com):
                         elser = False
                         if com[0] == "stroke":
                             if com[i] == "steps" and i+2 < len(com):
-                                steps = int(com[i+1])
-                                stepsvar = int(float(com[i+2]) * VARM)
+                                steps = float(com[i+1])
+                                stepsvar = float(com[i+2])
                                 done[0] = 0
                                 i += 3
                             elif com[i] == "len" and i+2 < len(com):
                                 llen = float(com[i+1])
-                                llenvar = float(com[i+2]) * VARM
+                                llenvar = float(com[i+2])
                                 done[1] = 0
                                 i += 3
                             elif com[i] == "turn" and i+3 < len(com):
                                 turni = float(com[i+1])
                                 turnf = float(com[i+2])
-                                turnvar = float(com[i+3]) * VARM
+                                turnvar = float(com[i+3])
                                 done[2] = 0
                                 i += 4
                             else: elser = True
@@ -181,19 +202,19 @@ def hwfile(f, chars):
                             if com[i] == "x" and i+3 < len(com):
                                 xtype = str(com[i+1])
                                 x = float(com[i+2])
-                                xvar = float(com[i+3]) * VARM
+                                xvar = float(com[i+3])
                                 done[0] = 0
                                 i += 4
                             elif com[i] == "y" and i+3 < len(com):
                                 ytype = str(com[i+1])
                                 y = float(com[i+2])
-                                yvar = float(com[i+3]) * VARM
+                                yvar = float(com[i+3])
                                 done[1] = 0
                                 i += 4
                             elif com[i] == "angle" and i+3 < len(com):
                                 angletype = str(com[i+1])
                                 angle = float(com[i+2])
-                                anglevar = float(com[i+3]) * VARM
+                                anglevar = float(com[i+3])
                                 done[2] = 0
                                 i += 4
                             else: elser = True
@@ -204,17 +225,31 @@ def hwfile(f, chars):
                                 i += 2
                             elif com[i] == "turn" and i+3 < len(com):
                                 turn = float(com[i+1])
-                                stepsvar = int(float(com[i+2]) * VARM)
-                                turnvar = float(com[i+3]) * VARM
+                                stepsvar = float(com[i+2])
+                                turnvar = float(com[i+3])
                                 done[1] = 0
                                 i += 4
                             elif com[i] == "len" and i+2 < len(com):
                                 llen = float(com[i+1])
-                                llenvar = float(com[i+2]) * VARM
+                                llenvar = float(com[i+2])
                                 done[2] = 0
                                 i += 3
                             else: elser = True
-                        else: elser = True
+                        elif com[0] == "subletter":
+                            if com[i] == "xscale" and i+1 < len(com):
+                                xscale = float(com[i+1])
+                                i += 2
+                            elif com[i] == "yscale" and i+1 < len(com):
+                                yscale = float(com[i+1])
+                                i += 2
+                            elif com[i] == "scale" and i+1 < len(com):
+                                xscale = yscale = float(com[i+1])
+                                i += 2
+                            elif com[i] == "varm" and i+1 < len(com):
+                                varm = float(com[i+1])
+                                i += 2
+                            else: elser = True
+                        else: elser = True # We should never reach this else
                         if not elser:
                             pass
                         elif com[i].startswith("#"):
@@ -225,20 +260,16 @@ def hwfile(f, chars):
                         if com[0] == "stroke": strokes.append(stroke(steps = steps, llen = llen, turni = turni, turnf = turnf, stepsvar = stepsvar, llenvar = llenvar, turnvar = turnvar))
                         elif com[0] == "reposition": strokes.append(reposition(xtype = xtype, x = x, xvar = xvar, ytype = ytype, y = y, yvar = yvar, angletype = angletype, angle = angle, anglevar = anglevar))
                         elif com[0] == "arc":
-                            steps = int(radius*turn + 0.5)
+                            steps = radius*turn
                             turni = turnf = turn/steps
                             steps = abs(steps)
                             strokes.append(stroke(steps = steps, llen = llen, turni = turni, turnf = turnf, stepsvar = stepsvar, llenvar = llenvar, turnvar = turnvar))
+                        elif com[0] == "subletter":
+                            strokes.append(letter(strokes = chars[com[1]].strokes, char = chars[com[1]].char, varm = varm, xscale = xscale, yscale = yscale))
                     else:
                         raise HWfileError(iperror.format(f.name, lno+1, com[0]))
                 else:
                     raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
-            elif com[0] == "subletter":
-                if mode == "letter":
-                    if com[1] in chars:
-                        strokes.append(chars[com[1]])
-                    else: raise HWfileError(slerror.format(f.name, lno+1, com[1]))
-                else: raise HWfileError(oocerror.format(f.name, lno+1, com[0]))
             elif com[0] == "end":
                 if mode == "letter":
                     mode = "main"
@@ -248,14 +279,23 @@ def hwfile(f, chars):
         except ValueError as ve:
             raise HWfileError(verror.format(f.name, lno+1, ve))
         
+def hwencode(s):
+    maps = {' ':'\\s', '\t':'\\t', '\n':'\\n'}
+    ret = []
+    for l in s:
+        if l in maps: ret.append(maps[l])
+        else: ret.append(l)
+    return ret
+
 if __name__ == "__main__":
-    f = open("default.hw")
-    chars = {}
-    hwfile(f, chars)
-    f.close()
+    with open("default.hw") as f:
+        chars = {}
+        hwfile(f, chars)
     x, y, a = 0, 0, 0
     k = []
-    for let in 'abcdefgh':#['a', 'b', '\\s', 'c', 'd', '\\n', '\\t', 'c', '\\r', 'a']:
-        l, x, y, a = chars[let](x, y, a, x, y)
+    with open("text.txt") as txtf:
+        mes = hwencode(txtf.read())
+    for let in mes:#list('AaBbCcDd')+['\\n']+ list('EeFfGgHh')+['\\n'] + list('IiJjKkLl') + ['\\n'] + list('MmNnOoPp') + ['\\n']+ list('QqRrSsTt') + ['\\n']+ list('UuVvWw') + ['\\n']+ list('XxYyZz.,;'):
+        l, x, y, a = chars[let](x, y, a, x, y, varm = VARM)
         k.extend(l)
     makeim(k)
